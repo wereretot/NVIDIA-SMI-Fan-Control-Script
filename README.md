@@ -3,4 +3,6 @@ NVIDIA SMI Fan Control Script, takes the temperture reading from NVIDIA SMI to c
 
 This script is intended for use with Tesla data center GPUs such as the K80, M40, P40, etc.
 
-https://github.com/wereretot/NVIDIA-SMI-Fan-Control-Script/blob/main/Screenshot_20230702_060634-1.png
+Example of the GUI:
+![alt text](https://github.com/wereretot/NVIDIA-SMI-Fan-Control-Script/edit/main/
+Screenshot_20230702_060634-1.png?raw=true)
