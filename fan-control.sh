@@ -9,7 +9,7 @@ fan_header_3="/sys/class/hwmon/hwmon4/pwm3"
 fan_header_4="/sys/class/hwmon/hwmon4/pwm4"
 
 # Define the emergency temperature threshold and maximum fan speed
-emergency_threshold=90
+emergency_threshold=85
 emergency_fan_speed=255
 
 # Function to set the fan speed based on the temperature
@@ -47,7 +47,7 @@ emergency_mode() {
 # Function to display ASCII elements
 display_ascii() {
   echo "+-----------------------------------------------------------+"
-  echo "|                  NVIDIA SMI Fan Control                   |"
+  echo "|               NVIDIA SMI BASED Fan Control                |"
   echo "+-----------------------------------------------------------+"
 }
 
@@ -66,9 +66,10 @@ update_gpu_info() {
     set_fan_speed $temperature
 
     # Print GPU information
-    printf "|  GPU Temperature: %s°C\t\t\t\t\t|\n" "$temperature"
-    printf "|  Fan Speed: %d%%\t\t\t\t\t\t|\n" "$pwm_value"
-    printf "|  PWM Value: %d\t\t\t\t\t\t|\n" "$fan_speed"
+    printf " |  GPU Temperature:\t%s°C\t\t\t\t   |\n" "$temperature"
+    printf " |  Fan Speed:\t\t%d%%\t\t\t\t   |\n" "$pwm_value"
+    printf " |  PWM Value Output:\t%d / 255\t\t\t   |\n" "$fan_speed"
+    echo "+-----------------------------------------------------------+"
   fi
 }
 
