@@ -67,8 +67,8 @@ update_gpu_info() {
 
     # Print GPU information
     printf " |  GPU Temperature:\t%s°C\t\t\t\t   |\n" "$temperature"
-    printf " |  Fan Speed:\t\t%d%%\t\t\t\t   |\n" "$pwm_value"
-    printf " |  PWM Value Output:\t%d / 255\t\t\t   |\n" "$fan_speed"
+    printf " |  Fan Speed:\t\t%d%%  \t\t\t\t   |\n" "$pwm_value"
+    printf " |  PWM Value Output:\t%d / 255  \t\t\t   |\n" "$fan_speed"
     echo "+-----------------------------------------------------------+"
   fi
 }
