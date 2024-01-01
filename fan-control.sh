@@ -1,16 +1,21 @@
 #!/bin/bash
 
 # Define the temperature thresholds and corresponding fan speeds
-thresholds=(40 43 45 47 50 55 60 63 65 67 70 73 75)  # Adjust the thresholds as desired
-fan_speeds=(40 48 55 62 70 90 113 126 147 170 200 223 255)  # Adjust the fan speeds corresponding to each threshold
+thresholds=(42 43 44 45 46 47 48 49 50 55 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76)  # Adjust the thresholds as desired
+fan_speeds=(40 100 110 120 130 149 150 160 170 200 223 255 255)  # Adjust the fan speeds corresponding to each threshold
+
+# Define the temperature threshold when the GPU will pause all programs running on it until it goes below this temperature
+# if you don't like this then set the temp to like 99 or something to disable it
+pause_threshold=73
+
+# Define the emergency temperature threshold and maximum fan speed
+emergency_threshold=85
+emergency_fan_speed=255
 
 # Define the fan headers
 fan_header_3="/sys/class/hwmon/hwmon4/pwm3"
 fan_header_4="/sys/class/hwmon/hwmon4/pwm4"
 
-# Define the emergency temperature threshold and maximum fan speed
-emergency_threshold=85
-emergency_fan_speed=255
 
 # Function to set the fan speed based on the temperature
 set_fan_speed() {
@@ -29,7 +34,7 @@ set_fan_speed() {
 
 # Function to handle emergency mode
 emergency_mode() {
-  echo "Emergency: Tesla P40 GPU is overheating!"
+  echo "Emergency: GPU is overheating!"
   echo "Setting fans to maximum speed."
 
   # Set the fan headers to maximum speed
@@ -59,6 +64,15 @@ update_gpu_info() {
   local fan_speed=$(cat $fan_header_3)
   # Calculate the PWM value based on the current fan speed
   local pwm_value=$((fan_speed * 100 / 255))
+
+  if [ "$temperature" -gt $pause_threshold ]
+  then
+      echo "Tasks are paused until the GPU cools down enough."
+      nvidia-smi --query-compute-apps=pid --format=csv,noheader | xargs -I{} kill -STOP {}
+  else
+      nvidia-smi --query-compute-apps=pid --format=csv,noheader | xargs -I{} kill -CONT {}
+  fi
+
 
   if [ $temperature -ge $emergency_threshold ]; then
     emergency_mode
