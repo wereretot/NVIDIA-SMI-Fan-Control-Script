@@ -107,5 +107,5 @@ while true; do
   tput cup 8 0
 
   # Wait for some time before updating the information again (in seconds)
-  sleep 5
+  sleep 1
 done
