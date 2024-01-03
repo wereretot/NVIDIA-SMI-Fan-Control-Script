@@ -1,11 +1,12 @@
 #!/bin/bash
 
-# Define the temperature thresholds and corresponding fan speeds
-thresholds=(42 43 44 45 46 47 48 49 50 55 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76)  # Adjust the thresholds as desired
-fan_speeds=(40 100 110 120 130 149 150 160 170 200 223 255 255)  # Adjust the fan speeds corresponding to each threshold
+# Define the minimum and maximum temperatures and corresponding fan speeds
+min_temp=44
+max_temp=54
+min_speed=50
+max_speed=255
 
 # Define the temperature threshold when the GPU will pause all programs running on it until it goes below this temperature
-# if you don't like this then set the temp to like 99 or something to disable it
 pause_threshold=73
 
 # Define the emergency temperature threshold and maximum fan speed
@@ -16,20 +17,16 @@ emergency_fan_speed=255
 fan_header_3="/sys/class/hwmon/hwmon4/pwm3"
 fan_header_4="/sys/class/hwmon/hwmon4/pwm4"
 
-
 # Function to set the fan speed based on the temperature
 set_fan_speed() {
   local temperature=$1
-  local index=0
 
-  # Find the appropriate fan speed based on the temperature
-  while [ $index -lt ${#thresholds[@]} ] && [ $temperature -ge ${thresholds[$index]} ]; do
-    index=$((index+1))
-  done
+  # Calculate the fan speed using a linear relationship
+  local fan_speed=$((min_speed + (max_speed - min_speed) * (temperature - min_temp) / (max_temp - min_temp)))
 
-  # Set the fan headers to the corresponding fan speed
-  sudo bash -c "echo ${fan_speeds[$index]} > $fan_header_3"
-  sudo bash -c "echo ${fan_speeds[$index]} > $fan_header_4"
+  # Set the fan headers to the calculated fan speed
+  sudo bash -c "echo $fan_speed > $fan_header_3"
+  sudo bash -c "echo $fan_speed > $fan_header_4"
 }
 
 # Function to handle emergency mode
@@ -103,5 +100,5 @@ while true; do
   tput cup 8 0
 
   # Wait for some time before updating the information again (in seconds)
-  sleep 5
+  sleep 1
 done
