@@ -1,33 +1,40 @@
 #!/bin/bash
 
-# Define the minimum and maximum temperatures and corresponding fan speeds
-min_temp=44
-max_temp=54
-min_speed=50
-max_speed=255
-
-# Define the temperature threshold when the GPU will pause all programs running on it until it goes below this temperature
-pause_threshold=73
-
-# Define the emergency temperature threshold and maximum fan speed
-emergency_threshold=85
-emergency_fan_speed=255
+# Define the temperature thresholds and corresponding fan speeds
+min_temp=42  # Minimum temperature threshold
+max_temp=58  # Maximum temperature threshold
 
 # Define the fan headers
 fan_header_3="/sys/class/hwmon/hwmon4/pwm3"
 fan_header_4="/sys/class/hwmon/hwmon4/pwm4"
 
+# Define the temperature threshold when the GPU will pause all programs running on it until it goes below this temperature
+pause_threshold=73
+
+
+# Define the emergency temperature threshold and maximum fan speed
+emergency_threshold=85
+emergency_fan_speed=255
+
 # Function to set the fan speed based on the temperature
 set_fan_speed() {
   local temperature=$1
 
-  # Calculate the fan speed using a linear relationship
-  local fan_speed=$((min_speed + (max_speed - min_speed) * (temperature - min_temp) / (max_temp - min_temp)))
+  # Calculate the fan speed based on a linear control
+  local fan_speed=$(( (temperature - min_temp) * (255 - 40) / (max_temp - min_temp) + 40 ))
 
-  # Set the fan headers to the calculated fan speed
+  # Ensure fan speed is within valid range
+  if (( fan_speed < 0 )); then
+    fan_speed=0
+  elif (( fan_speed > 255 )); then
+    fan_speed=255
+  fi
+
+  # Set the fan headers to the corresponding fan speed
   sudo bash -c "echo $fan_speed > $fan_header_3"
   sudo bash -c "echo $fan_speed > $fan_header_4"
 }
+
 
 # Function to handle emergency mode
 emergency_mode() {
@@ -62,7 +69,7 @@ update_gpu_info() {
   # Calculate the PWM value based on the current fan speed
   local pwm_value=$((fan_speed * 100 / 255))
 
-  if [ "$temperature" -gt $pause_threshold ]
+  if [ -n "$temperature" ] && [ -n "$pause_threshold" ] && [ "$temperature" -gt "$pause_threshold" ]
   then
       echo "Tasks are paused until the GPU cools down enough."
       nvidia-smi --query-compute-apps=pid --format=csv,noheader | xargs -I{} kill -STOP {}
@@ -100,5 +107,5 @@ while true; do
   tput cup 8 0
 
   # Wait for some time before updating the information again (in seconds)
-  sleep 1
+  sleep 5
 done
