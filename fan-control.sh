@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the temperature thresholds and corresponding fan speeds
-min_temp=40  # Minimum temperature threshold
+min_temp=42  # Minimum temperature threshold
 max_temp=58  # Maximum temperature threshold
 
 # Define the fan headers
@@ -16,7 +16,7 @@ pause_threshold=73
 emergency_threshold=85
 emergency_fan_speed=255
 
-# Define a hysteresis value
+# Define a hysteresis value to prevent fan oscillating
 hysteresis=10
 
 # Function to set the fan headers to manual mode
@@ -138,5 +138,5 @@ while true; do
   tput cup 8 0
 
   # Wait for some time before updating the information again (in seconds)
-  sleep 1
+  sleep 2
 done
