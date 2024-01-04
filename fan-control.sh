@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the temperature thresholds and corresponding fan speeds
-min_temp=42  # Minimum temperature threshold
+min_temp=40  # Minimum temperature threshold
 max_temp=58  # Maximum temperature threshold
 
 # Define the fan headers
@@ -16,9 +16,22 @@ pause_threshold=73
 emergency_threshold=85
 emergency_fan_speed=255
 
+# Define a hysteresis value
+hysteresis=10
+
+# Function to calculate absolute value
+abs() {
+  if [ $1 -lt 0 ]; then
+    echo $((-$1))
+  else
+    echo $1
+  fi
+}
+
 # Function to set the fan speed based on the temperature
 set_fan_speed() {
   local temperature=$1
+  local last_fan_speed=$(cat $fan_header_3)
 
   # Calculate the fan speed based on a linear control
   local fan_speed=$(( (temperature - min_temp) * (255 - 40) / (max_temp - min_temp) + 40 ))
@@ -30,10 +43,15 @@ set_fan_speed() {
     fan_speed=255
   fi
 
-  # Set the fan headers to the corresponding fan speed
-  sudo bash -c "echo $fan_speed > $fan_header_3"
-  sudo bash -c "echo $fan_speed > $fan_header_4"
+  # Add hysteresis: only change the fan speed if the difference is greater than the hysteresis value
+  if (( $(abs $((fan_speed - last_fan_speed))) > hysteresis )); then
+    # Set the fan headers to the corresponding fan speed
+    sudo bash -c "echo $fan_speed > $fan_header_3"
+    sudo bash -c "echo $fan_speed > $fan_header_4"
+  fi
 }
+
+
 
 
 # Function to handle emergency mode
