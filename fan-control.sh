@@ -19,6 +19,17 @@ emergency_fan_speed=255
 # Define a hysteresis value
 hysteresis=10
 
+# Function to set the fan headers to manual mode
+set_manual_mode() {
+  # Define the fan control mode headers
+  fan_mode_header_3="/sys/class/hwmon/hwmon4/pwm3_enable"
+  fan_mode_header_4="/sys/class/hwmon/hwmon4/pwm4_enable"
+
+  # Set the fan headers to manual mode
+  sudo bash -c "echo 1 > $fan_mode_header_3"
+  sudo bash -c "echo 1 > $fan_mode_header_4"
+}
+
 # Function to calculate absolute value
 abs() {
   if [ $1 -lt 0 ]; then
@@ -112,6 +123,8 @@ update_gpu_info() {
 # Clear the screen and display the initial ASCII elements
 clear
 display_ascii
+
+set_manual_mode
 
 # Continuously update the GPU information
 while true; do
