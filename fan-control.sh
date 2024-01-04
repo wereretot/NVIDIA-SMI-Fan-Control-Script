@@ -134,6 +134,9 @@ while true; do
   # Update the GPU information
   update_gpu_info
 
+  # Keep sudo alive
+  sudo -v
+
   # Move the cursor to the bottom of the output
   tput cup 8 0
 
