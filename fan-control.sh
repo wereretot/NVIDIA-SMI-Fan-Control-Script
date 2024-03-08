@@ -4,8 +4,9 @@
 min_temp=42  # Minimum temperature threshold
 max_temp=58  # Maximum temperature threshold
 
-
+## the hardware monitor that is used
 hwmon="hwmon3"
+
 # Define the fan headers
 fan_header_3="/sys/class/hwmon/$hwmon/pwm3"
 fan_header_4="/sys/class/hwmon/$hwmon/pwm4"
