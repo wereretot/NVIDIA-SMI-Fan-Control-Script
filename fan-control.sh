@@ -4,9 +4,11 @@
 min_temp=42  # Minimum temperature threshold
 max_temp=58  # Maximum temperature threshold
 
+
+hwmon="hwmon3"
 # Define the fan headers
-fan_header_3="/sys/class/hwmon/hwmon4/pwm3"
-fan_header_4="/sys/class/hwmon/hwmon4/pwm4"
+fan_header_3="/sys/class/hwmon/$hwmon/pwm3"
+fan_header_4="/sys/class/hwmon/$hwmon/pwm4"
 
 # Define the temperature threshold when the GPU will pause all programs running on it until it goes below this temperature
 pause_threshold=73
@@ -22,8 +24,8 @@ hysteresis=10
 # Function to set the fan headers to manual mode
 set_manual_mode() {
   # Define the fan control mode headers
-  fan_mode_header_3="/sys/class/hwmon/hwmon4/pwm3_enable"
-  fan_mode_header_4="/sys/class/hwmon/hwmon4/pwm4_enable"
+  fan_mode_header_3="/sys/class/hwmon/$hwmon/pwm3_enable"
+  fan_mode_header_4="/sys/class/hwmon/$hwmon/pwm4_enable"
 
   # Set the fan headers to manual mode
   sudo bash -c "echo 1 > $fan_mode_header_3"
