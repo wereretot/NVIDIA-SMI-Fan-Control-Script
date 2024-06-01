@@ -1,26 +1,25 @@
 #!/bin/bash
 
 # Define the temperature thresholds and corresponding fan speeds
-min_temp=42  # Minimum temperature threshold
-max_temp=58  # Maximum temperature threshold
+min_temp=70  # Minimum temperature threshold
+max_temp=80  # Maximum temperature threshold
 
-## the hardware monitor that is used
-hwmon="hwmon3"
 
+hwmon="hwmon4"
 # Define the fan headers
 fan_header_3="/sys/class/hwmon/$hwmon/pwm3"
 fan_header_4="/sys/class/hwmon/$hwmon/pwm4"
 
 # Define the temperature threshold when the GPU will pause all programs running on it until it goes below this temperature
-pause_threshold=73
+pause_threshold=87
 
 
 # Define the emergency temperature threshold and maximum fan speed
-emergency_threshold=85
+emergency_threshold=89
 emergency_fan_speed=255
 
 # Define a hysteresis value to prevent fan oscillating
-hysteresis=10
+hysteresis=0
 
 # Function to set the fan headers to manual mode
 set_manual_mode() {
@@ -144,5 +143,5 @@ while true; do
   tput cup 8 0
 
   # Wait for some time before updating the information again (in seconds)
-  sleep 2
+  sleep 0.5
 done
